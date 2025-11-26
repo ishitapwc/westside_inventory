@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><Order>
+    <OrderRefNo>WS</OrderRefNo>
+    <OrderType>01</OrderType>
+    <OrderNo>2412604</OrderNo>
+    <OrderDate>2025-11-12 23:21:43</OrderDate>
+    <ShipCharge/>
+    <AddressInfo>
+        <AddressType>DA</AddressType>
+        <EmailID>shruthi.prvn@gmail.com</EmailID>
+        <FirstName>SHRUTHI</FirstName>
+        <LastName>PRAVEEN</LastName>
+        <PhoneNo>+919880611951</PhoneNo>
+        <Address1>96 Bangalore Urban</Address1>
+        <Address2>Serpentine Road</Address2>
+        <Landmark/>
+        <Country>India</Country>
+        <City>Bengaluru</City>
+        <State>10</State>
+        <Pincode>560020</Pincode>
+    </AddressInfo>
+    <AddressInfo>
+        <AddressType>BA</AddressType>
+        <EmailID>shruthi.prvn@gmail.com</EmailID>
+        <FirstName>SHRUTHI</FirstName>
+        <LastName>PRAVEEN</LastName>
+        <PhoneNo>+919880611951</PhoneNo>
+        <Address1>96 Bangalore Urban</Address1>
+        <Address2>Serpentine Road</Address2>
+        <Landmark/>
+        <Country>India</Country>
+        <City>Bengaluru</City>
+        <State>10</State>
+        <Pincode>560020</Pincode>
+    </AddressInfo>
+    <PaymentInfo>
+        <PaymentCost>1424.05</PaymentCost>
+        <PaymentMode>RP</PaymentMode>
+        <PaymentStatus>Paid</PaymentStatus>
+        <PaymentInfo>1 Razorpay</PaymentInfo>
+        <PaymentDate>2025-11-12 23:21:43</PaymentDate>
+        <ShippingCharge>0.00</ShippingCharge>
+        <ZAuthorization/>
+        <TxnId>rQGLBuLFKJgGANEdJMJCJZLmZ</TxnId>
+        <ProductInfo/>
+    </PaymentInfo>
+    <OrderLine>
+        <TransactionId>2412604_2</TransactionId>
+        <OMSStatusCode>001</OMSStatusCode>
+        <SellerID>100001</SellerID>
+        <ArticleNumber>301033114003</ArticleNumber>
+        <TaxType>IGST</TaxType>
+        <TaxValue>0.00</TaxValue>
+        <Price>1499.00</Price>
+        <IsCOD>N</IsCOD>
+        <ApportionedPrice>1424.05</ApportionedPrice>
+        <ApportionedCODPrice>0</ApportionedCODPrice>
+        <ApportionedShippingCharge>0</ApportionedShippingCharge>
+        <IsaGift>N</IsaGift>
+        <giftMessage>Null</giftMessage>
+        <giftPrice>NA</giftPrice>
+        <DeliveryMode>HD</DeliveryMode>
+        <isPrecious>NA</isPrecious>
+        <isFragile>NA</isFragile>
+        <TransportMode>Air</TransportMode>
+        <FulfillmentType>SSHIP</FulfillmentType>
+        <P1SlaveId>W016</P1SlaveId>
+        <P1LogisticsID>BL</P1LogisticsID>
+        <PrepaidLimit1>100000</PrepaidLimit1>
+        <PrepaidLimit2>0.0</PrepaidLimit2>
+        <returnLogisticsID>NA</returnLogisticsID>
+        <AlternateContactName>SHRUTHI PRAVEEN</AlternateContactName>
+        <AlternatePhoneNo>+919880611951</AlternatePhoneNo>
+        <AWBNo>AWBBH766017</AWBNo>
+        <PackId>L1290EF35179</PackId>
+        <GST>
+            <SLAVEGSTIN>33AAACT6503G1ZQ</SLAVEGSTIN>
+            <DestinationStateCode>10</DestinationStateCode>
+            <HSNCode/>
+            <HSNTax>
+                <TaxType>IGST</TaxType>
+                <TaxRate>18.00</TaxRate>
+                <TaxValue>0.00</TaxValue>
+            </HSNTax>
+            <SACCodeSchedulingCharges>0</SACCodeSchedulingCharges>
+            <SchedulingChargesTAXES>
+                <TaxType>IGST</TaxType>
+                <TaxRate>0</TaxRate>
+                <TaxValue>0.00</TaxValue>
+            </SchedulingChargesTAXES>
+            <SACCodeShipCharges>0</SACCodeShipCharges>
+            <ShippingChargesTAXES>
+                <TaxType>IGST</TaxType>
+                <TaxRate>0</TaxRate>
+                <TaxValue>0.00</TaxValue>
+            </ShippingChargesTAXES>
+            <GiftingCharges>0.00</GiftingCharges>
+        </GST>
+        <PromotionInfo>
+            <promotionCode>CUSTOMER_TREAT</promotionCode>
+            <promotionValue>74.95</promotionValue>
+            <tatareimbursepercent/>
+        </PromotionInfo>
+        <coupon>
+            <couponCode>NA</couponCode>
+            <couponValue>0.00</couponValue>
+            <tatareimbursepercent/>
+        </coupon>
+    </OrderLine>
+</Order>

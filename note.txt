@@ -1,0 +1,82 @@
+we need to create folder: cgi-bin
+then move all the files 
+chmod +x /var/www/html/python/westside/cgi-bin/westside.py -> executable file then
+
+/var/www/html/python/westside
+run python3 -m http.server --cgi 8001 -> create http server
+
+open broswer then
+
+http://0.0.0.0:8001/cgi-bin/westside.py
+
+postgres
+
+install psycopg2
+sudo apt install python3-psycopg2
+
+then
+
+GET /inventory/ats/{sku} (channel/location-aware)
+
+store procedure
+
+CREATE OR REPLACE PROCEDURE consolidate_sku_totals()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Clear old data
+    TRUNCATE TABLE consolidated_sku;
+
+    -- Insert new totals
+    INSERT INTO consolidated_sku (sku, qty)
+    SELECT sku, SUM(on_hand)
+    FROM sku_info
+    GROUP BY sku;
+END;
+$$;
+
+ SELECT sku, SUM(qty)
+    FROM sku_info
+    GROUP BY sku;
+
+CALL consolidate_sku_totals();
+
+select * from consolidated_sku;
+
+------------------------------------
+
+API
+install this two package
+sudo apt install python3-uvicorn
+sudo apt install python3-fastapi
+
+
+running in brower
+uvicorn api.api:app --host 0.0.0.0 --port 8002
+
+
+---------------------------------------
+
+Folder structure
+/var/www/html/python/westside/
+    ├── cgi-bin/
+    │     ├── csv_import.py
+    │     ├── db_config.py
+    │     ├── db_connection.py
+    ├── api/
+    │     └── api.py     <-- FastAPI file
+    ├── csv/
+    ├── archive/
+
+--------------------------------------
+Setup redis
+
+sudo apt install redis-server -y
+sudo systemctl start redis
+redis-cli ping 
+  OUTPUT ---> PONG
+
+sudo apt install python3-redis
+
+
+
