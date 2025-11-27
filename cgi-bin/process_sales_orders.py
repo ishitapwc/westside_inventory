@@ -9,8 +9,8 @@ from psycopg2.extras import execute_values
 from openpyxl import load_workbook
 from db_connection import get_connection
 
-INPUT_FOLDER = "/var/www/html/westside/orders"
-ARCHIVE_FOLDER = "/var/www/html/westside/orders_archive"
+INPUT_FOLDER = "/var/www/html/python/westside_inventory/orders"
+ARCHIVE_FOLDER = "/var/www/html/python/westside_inventory/orders_archive"
 BATCH_SIZE = 5000
 
 
@@ -32,7 +32,7 @@ def process_xml(file_path, cursor):
     inserted_ids = []
 
     insert_query = """
-        INSERT INTO sales_orders (sku, sale_qty, store_code, consolidate)
+        INSERT INTO sales_orders (sku, sale_qty, store_code, consolidate, is_read)
         VALUES %s
         RETURNING id
     """
@@ -42,7 +42,7 @@ def process_xml(file_path, cursor):
         store_code = order_line.find("P1SlaveId").text
         sale_qty = 1
 
-        batch_data.append((sku, sale_qty, store_code, 0))
+        batch_data.append((sku, sale_qty, store_code, 0, 0))
 
         if len(batch_data) >= BATCH_SIZE:
             insert_batch(cursor, insert_query, batch_data, inserted_ids)
@@ -71,7 +71,7 @@ def process_xlsx(file_path, cursor):
     inserted_ids = []
 
     insert_query = """
-        INSERT INTO sales_orders (sku, sale_qty, store_code, consolidate)
+        INSERT INTO sales_orders (sku, sale_qty, store_code, consolidate, is_read)
         VALUES %s
         RETURNING id
     """
@@ -83,7 +83,7 @@ def process_xlsx(file_path, cursor):
         sale_qty = 1                     # always 1
 
         if sku:
-            batch_data.append((str(sku), sale_qty, str(store_code), 0))
+            batch_data.append((str(sku), sale_qty, str(store_code), 0, 0))
 
         if len(batch_data) >= BATCH_SIZE:
             insert_batch(cursor, insert_query, batch_data, inserted_ids)
@@ -153,13 +153,16 @@ def orderProcess():
         except Exception as e:
             print(f" Error processing {filename}: {str(e)} <br>")
 
-        # --------- RUN PROCEDURE ONLY ONCE AFTER ALL FILES ---------
-        try:
-            print(" Running sales_orders_total()...")
-            cursor.execute("CALL sales_orders_total()")
-        except Exception as e:
-            print(f" Error running procedure: {str(e)}")
-        # -----------------------------------------------------------
+    # --------- RUN PROCEDURE ONLY ONCE AFTER ALL FILES ---------
+    try:
+        print(" Running process_sales_orders()...")
+        cursor.execute("CALL process_sales_orders()")
+        conn.commit()
+    except Exception as e:
+        print(f" Error running procedure: {str(e)}")
+    # -----------------------------------------------------------
+
+    
 
     cursor.close()
     conn.close()

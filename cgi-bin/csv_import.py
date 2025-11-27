@@ -10,8 +10,8 @@ from db_connection import get_connection
 from psycopg2.extras import execute_values
 import redis
 
-CSV_FOLDER = "/var/www/html/westside/csv"
-ARCHIVE_FOLDER = "/var/www/html/westside/archive"
+CSV_FOLDER = "/var/www/html/python/westside_inventory/csv"
+ARCHIVE_FOLDER = "/var/www/html/python/westside_inventory/archive"
 BATCH_SIZE = 5000  
 
 
@@ -243,6 +243,50 @@ def stored_redis_cache():
         return False
 
 stored_redis_cache()
+
+# # Cache consolidated_store_sku table in Redis
+# def cached_consolidated_store_sku():
+#     try:
+#         start_time = time.time()
+#         cache = redis.Redis(host="localhost", port=6379, db=0)
+
+#         conn = get_connection()
+#         if not conn:
+#             print("DB connection failed<br>")
+#             return False
+
+#         cur = conn.cursor()
+#         cur.execute("SELECT sku, location, avb_qty, is_send FROM consolidated_store_sku")
+#         rows = cur.fetchall()
+
+#         pipeline = cache.pipeline()
+
+#         # store each row in Redis
+#         for sku, location, avb_qty, is_send in rows:
+
+#             redis_key = f"store_sku:{sku}:{location}"
+
+#             pipeline.hset(redis_key, mapping={
+#                 "sku": sku,
+#                 "location": location,
+#                 "avb_qty": avb_qty,
+#                 "is_send": is_send
+#             })
+
+#         pipeline.execute()
+
+#         print("Consolidated Stored data in Redis cache<br>")
+#         print("<br>============================<br>")
+#         print(f" TOTAL Time: {format_time(time.time() - start_time)}<br>")
+#         print("============================<br>")
+
+#         return True
+
+#     except Exception as e:
+#         print(f"Error caching consolidated_store_sku: {e}<br>")
+#         return False
+
+# cached_consolidated_store_sku()
 
 # print("<br>CSV Import Completed.<br>")
 
