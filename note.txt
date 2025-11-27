@@ -1,0 +1,194 @@
+we need to create folder: cgi-bin
+then move all the files 
+chmod +x /var/www/html/python/westside/cgi-bin/westside.py -> executable file then
+
+/var/www/html/python/westside
+run -> python3 -m http.server --cgi 8001 -> create http server
+
+open broswer then
+
+http://0.0.0.0:8001/cgi-bin/westside.py
+
+postgres
+
+install psycopg2
+sudo apt install python3-psycopg2
+
+then
+
+GET /inventory/ats/{sku} (channel/location-aware)
+
+store procedure
+
+CREATE OR REPLACE PROCEDURE consolidate_sku_totals()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Clear old data
+    TRUNCATE TABLE consolidated_sku;
+
+    -- Insert new totals
+    INSERT INTO consolidated_sku (sku, qty)
+    SELECT sku, SUM(on_hand)
+    FROM sku_info
+    GROUP BY sku;
+
+    --Clear Old data
+    TRUNCATE TABLE consolidated_store_sku;
+
+    -- Insert new Store Data
+    INSERT INTO consolidated_store_sku (sku, location, avb_qty, is_send)
+    SELECT sku, location, on_hand, 0
+    FROM sku_info;
+
+END;
+$$;
+
+ SELECT sku, SUM(qty)
+    FROM sku_info
+    GROUP BY sku;
+
+CALL consolidate_sku_totals();
+
+select * from consolidated_sku;
+
+------------------------------------
+
+API
+install this two package
+sudo apt install python3-uvicorn
+sudo apt install python3-fastapi
+
+
+running in brower
+uvicorn api.api:app --host 0.0.0.0 --port 8002
+
+
+---------------------------------------
+
+Folder structure
+/var/www/html/python/westside/
+    ├── cgi-bin/
+    │     ├── csv_import.py
+    │     ├── db_config.py
+    │     ├── db_connection.py
+    ├── api/
+    │     └── api.py              <-- FastAPI file
+    │     └── inventoryApi.py     <-- FastAPI file
+    ├── csv/
+    ├── archive/
+
+--------------------------------------
+Setup redis
+
+sudo apt install redis-server -y
+sudo systemctl start redis
+redis-cli ping 
+  OUTPUT ---> PONG
+
+sudo apt install python3-redis
+
+--------------------------------------------
+            26-11-25
+----------------------------------------------
+sudo apt install python3-openpyxl
+
+Table 
+
+CREATE TABLE consolidated_store_sku (
+    id SERIAL PRIMARY KEY,
+    sku BIGINT NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    avb_qty INTEGER NOT NULL DEFAULT 0,
+    is_send BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Ignore this procedure row wise update
+
+CREATE OR REPLACE PROCEDURE process_sales_orders()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    r RECORD;
+BEGIN
+    -- Loop through all unread sales orders
+    FOR r IN 
+        SELECT id, sku, sale_qty, store_code 
+        FROM sales_orders 
+        WHERE is_read = 0
+    LOOP
+        -- Update consolidate_store_sku
+        UPDATE consolidated_store_sku
+        SET 
+            avb_qty = GREATEST(avb_qty - r.sale_qty, 0),   -- prevent negative stock
+            is_send = 0
+        WHERE sku = r.sku
+          AND location = r.store_code;
+
+        -- Mark this order as processed
+        UPDATE sales_orders
+        SET is_read = 1
+        WHERE id = r.id;
+    END LOOP;
+
+END;
+$$;
+
+Bulk Process
+-----------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE consolidate_sku_totals()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Clear old data
+    TRUNCATE TABLE consolidated_sku;
+
+    -- Insert new totals
+    INSERT INTO consolidated_sku (sku, qty)
+    SELECT sku, SUM(on_hand)
+    FROM sku_info
+    GROUP BY sku;
+
+    --Clear Old data
+    TRUNCATE TABLE consolidated_store_sku;
+
+    -- Insert new Store Data
+    INSERT INTO consolidated_store_sku (sku, location, avb_qty, is_send)
+    SELECT sku, location, on_hand, 0
+    FROM sku_info;
+
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE process_sales_orders()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- 1. Bulk update stock
+    UPDATE consolidate_store_sku css
+    SET 
+        avb_qty = GREATEST(css.avb_qty - so.total_sale, 0),
+        is_send = 0
+    FROM (
+        SELECT sku, store_code, SUM(sale_qty) AS total_sale
+        FROM sales_orders
+        WHERE is_read = 0
+        GROUP BY sku, store_code
+    ) so
+    WHERE css.sku = so.sku
+      AND css.location = so.store_code;
+
+    -- 2. Mark orders as processed
+    UPDATE sales_orders
+    SET is_read = 1
+    WHERE is_read = 0;
+
+END;
+$$;
+
+UPDATE public.sales_orders
+SET is_read = 0
+WHERE is_read = 1
+
+
