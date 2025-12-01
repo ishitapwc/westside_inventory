@@ -71,13 +71,13 @@ Folder structure
     ├── cgi-bin/
     │     ├── csv_import.py
     │     ├── db_config.py
+    |     ├── ftp_config.py
+    |     ├── ftp_csv_import.py
     │     ├── db_connection.py
     │     ├── process_sales_orders.py
-    ├── api/
-    │     └── api.py              <-- FastAPI file
-    │     └── inventoryApi.py     <-- FastAPI file
     ├── csv/
     ├── archive/
+    ├── logs/
 
 --------------------------------------
 Setup redis

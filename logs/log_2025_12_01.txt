@@ -1,0 +1,9 @@
+2025-12-01 11:29:58.561166 - START IMPORT → WESTSIDE_1
+2025-12-01 11:30:02.846346 - Downloaded Vinculum_Test_001_20251120050544_changes.csv in 1 sec 126 ms
+2025-12-01 11:30:02.868618 - Batch 1 for Vinculum_Test_001_20251120050544_changes.csv → 4 rows inserted/updated in 0 sec 2 ms
+2025-12-01 11:30:03.460558 - FTP archive move Vinculum_Test_001_20251120050544_changes.csv in 0 sec 580 ms
+2025-12-01 11:30:03.461235 - Local archive move Vinculum_Test_001_20251120050544_changes.csv in 0 sec 0 ms
+2025-12-01 11:30:03.768045 - FTP processing completed in 5 sec 206 ms
+2025-12-01 11:30:03.816546 - Stored procedure consolidate_sku_totals executed in 0 sec 48 ms
+2025-12-01 11:30:03.842605 - Redis cache updated in 0 sec 25 ms
+2025-12-01 11:30:03.843077 - FINISHED IMPORT → Total time: 5.28 sec
