@@ -67,16 +67,17 @@ uvicorn api.api:app --host 0.0.0.0 --port 8002
 ---------------------------------------
 
 Folder structure
-/var/www/html/python/westside/
+/var/www/html/python/westside_inventory/
     ├── cgi-bin/
     │     ├── csv_import.py
     │     ├── db_config.py
+    |     ├── ftp_config.py
+    |     ├── ftp_csv_import.py
     │     ├── db_connection.py
-    ├── api/
-    │     └── api.py              <-- FastAPI file
-    │     └── inventoryApi.py     <-- FastAPI file
+    │     ├── process_sales_orders.py
     ├── csv/
     ├── archive/
+    ├── logs/
 
 --------------------------------------
 Setup redis
@@ -165,7 +166,9 @@ CREATE OR REPLACE PROCEDURE process_sales_orders()
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    -- 1. Bulk update stock
+    --------------------------------------------------------------------
+    -- 1. Bulk update consolidated_store_sku  (sku + store_code)
+    --------------------------------------------------------------------
     UPDATE consolidate_store_sku css
     SET 
         avb_qty = GREATEST(css.avb_qty - so.total_sale, 0),
@@ -179,7 +182,23 @@ BEGIN
     WHERE css.sku = so.sku
       AND css.location = so.store_code;
 
-    -- 2. Mark orders as processed
+    --------------------------------------------------------------------
+    -- 2. Bulk update consolidated_sku  (SKU only)
+    --------------------------------------------------------------------
+    UPDATE consolidated_sku cs
+    SET 
+        avb_qty = GREATEST(cs.avb_qty - so2.total_sale, 0)
+    FROM (
+        SELECT sku, SUM(sale_qty) AS total_sale
+        FROM sales_orders
+        WHERE is_read = 0
+        GROUP BY sku
+    ) so2
+    WHERE cs.sku = so2.sku;
+
+    --------------------------------------------------------------------
+    -- 3. Mark all pending orders as processed
+    --------------------------------------------------------------------
     UPDATE sales_orders
     SET is_read = 1
     WHERE is_read = 0;
@@ -187,8 +206,17 @@ BEGIN
 END;
 $$;
 
+
 UPDATE public.sales_orders
 SET is_read = 0
 WHERE is_read = 1
 
+---------------------------------------------------------
+            29-11-2025
+---------------------------------------------------------
+CREATE TABLE tul_test_sku (
+    sku VARCHAR(150),
+    location VARCHAR(150),
+    qty INT
+);
 
