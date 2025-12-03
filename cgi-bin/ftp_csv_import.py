@@ -312,4 +312,4 @@ def run_import(ftp_name):
 # EXECUTE
 # ---------------------------------------------------------
 if __name__ == "__main__":
-    run_import("WESTSIDE_1")
+    run_import("WESTSIDE_SAP")
